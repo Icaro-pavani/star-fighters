@@ -1,6 +1,7 @@
 import axios from "axios";
 import { number } from "joi";
 import { conflictError } from "../middleware/handleErrorsMiddleware.js";
+import repository from "../repositories/repository.js";
 
 export async function battleService(firstUser: string, secondUser: string) {
   const API_URL: string = "https://api.github.com/users/";
@@ -38,4 +39,39 @@ export async function battleService(firstUser: string, secondUser: string) {
     loser,
     draw,
   };
+}
+
+export async function updateDatabaseWithoutDraw(winner: string, loser: string) {
+  const winnerExist = await repository.getFighterByUsername(winner);
+  if (winnerExist.rowCount > 0) {
+    await repository.updateFighter("wins", winner);
+  } else {
+    await repository.insertNewUser(winner, 1, 0, 0);
+  }
+
+  const loserResult = await repository.getFighterByUsername(loser);
+  if (loserResult.rowCount > 0) {
+    await repository.updateFighter("losses", loser);
+  } else {
+    await repository.insertNewUser(loser, 0, 1, 0);
+  }
+}
+
+export async function updateDatabaseWithDraw(
+  firstUser: string,
+  secondUser: string
+) {
+  const firstResult = await repository.getFighterByUsername(firstUser);
+  if (firstResult.rowCount > 0) {
+    await repository.updateFighter("draws", firstUser);
+  } else {
+    await repository.insertNewUser(firstUser, 0, 0, 1);
+  }
+
+  const secondResult = await repository.getFighterByUsername(secondUser);
+  if (secondResult.rowCount > 0) {
+    await repository.updateFighter("draws", secondUser);
+  } else {
+    await repository.insertNewUser(secondUser, 0, 0, 1);
+  }
 }

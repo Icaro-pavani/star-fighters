@@ -1,9 +1,19 @@
 import { Request, Response } from "express";
-import { battleService } from "../services/apiServices.js";
+import {
+  battleService,
+  updateDatabaseWithDraw,
+  updateDatabaseWithoutDraw,
+} from "../services/apiServices.js";
 
 export async function battle(req: Request, res: Response) {
   const { firstUser, secondUser } = res.locals.body;
-  const test = await battleService(firstUser, secondUser);
+  const response = await battleService(firstUser, secondUser);
 
-  res.send(test);
+  if (response.draw) {
+    updateDatabaseWithDraw(firstUser, secondUser);
+  } else {
+    updateDatabaseWithoutDraw(response.winner, response.loser);
+  }
+
+  res.send(response);
 }
