@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import repository from "../repositories/repository.js";
 import {
   battleService,
   updateDatabaseWithDraw,
@@ -6,7 +7,8 @@ import {
 } from "../services/apiServices.js";
 
 export async function battle(req: Request, res: Response) {
-  const { firstUser, secondUser } = res.locals.body;
+  const { firstUser, secondUser }: { firstUser: string; secondUser: string } =
+    res.locals.body;
   const response = await battleService(firstUser, secondUser);
 
   if (response.draw) {
@@ -16,4 +18,9 @@ export async function battle(req: Request, res: Response) {
   }
 
   res.send(response);
+}
+
+export async function ranking(req: Request, res: Response) {
+  const { rows: fighters } = await repository.getRanking();
+  res.status(200).send({ fighters });
 }

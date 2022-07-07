@@ -25,6 +25,17 @@ async function getFighterByUsername(username: string) {
   ]);
 }
 
-const repository = { insertNewUser, updateFighter, getFighterByUsername };
+async function getRanking() {
+  return connection.query(
+    `SELECT username, wins, losses, draws FROM fighters ORDER BY wins DESC, draws ASC, losses ASC`
+  );
+}
+
+const repository = {
+  insertNewUser,
+  updateFighter,
+  getFighterByUsername,
+  getRanking,
+};
 
 export default repository;
