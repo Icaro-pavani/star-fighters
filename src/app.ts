@@ -1,15 +1,16 @@
 import cors from "cors";
 import express from "express";
+import "express-async-errors";
 
 import "./config/setup.js";
-import handleErrorsMiddleware from "./middleware/handleErrorsMiddleware.js";
+import handleErrors from "./middleware/handleErrorsMiddleware.js";
 import router from "./routers/router.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(router);
-app.use(handleErrorsMiddleware);
+app.use(handleErrors);
 
 const port: number = +process.env.PORT || 5000;
 

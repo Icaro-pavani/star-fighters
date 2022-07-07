@@ -1,4 +1,4 @@
-import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 const serviceErrorToStatusCode = {
   conflict: 409,
@@ -13,14 +13,14 @@ export function unprocessableError() {
   return { type: "unprocessable" };
 }
 
-export default function handleErrorsMiddleware(
-  err: any,
+export default async function handleErrors(
+  error: any,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  if (err.type) {
-    return res.sendStatus(serviceErrorToStatusCode[err.type]);
+  if (error) {
+    return res.sendStatus(serviceErrorToStatusCode[error.type]);
   }
 
   return res.sendStatus(500);

@@ -9,14 +9,17 @@ import {
 export async function battle(req: Request, res: Response) {
   const { firstUser, secondUser }: { firstUser: string; secondUser: string } =
     res.locals.body;
-  const response = await battleService(firstUser, secondUser);
+  const response: any = await battleService(firstUser, secondUser);
 
-  if (response.draw) {
-    updateDatabaseWithDraw(firstUser, secondUser);
+  if (response.type) {
+    throw response;
   } else {
-    updateDatabaseWithoutDraw(response.winner, response.loser);
+    if (response.draw) {
+      updateDatabaseWithDraw(firstUser, secondUser);
+    } else {
+      updateDatabaseWithoutDraw(response.winner, response.loser);
+    }
   }
-
   res.send(response);
 }
 

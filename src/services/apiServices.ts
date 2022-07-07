@@ -1,5 +1,4 @@
 import axios from "axios";
-import { number } from "joi";
 import { conflictError } from "../middleware/handleErrorsMiddleware.js";
 import repository from "../repositories/repository.js";
 
@@ -21,7 +20,7 @@ export async function battleService(firstUser: string, secondUser: string) {
       secondUserStar += repo["stargazers_count"];
     }
   } catch (error) {
-    throw conflictError();
+    return conflictError();
   }
 
   if (firstUserStar === secondUserStar) {
